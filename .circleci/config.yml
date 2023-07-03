@@ -156,18 +156,11 @@ jobs:
       - run:
           name: Install Ansible 
           command: |
-              python --version
               python3 -m pip install --user ansible
       - run: 
           name: Run Playbook and Configure server
           command: |
             ansible-playbook -i $WORKSPACE_DIR/inventory.txt $(eval echo "$CIRCLE_WORKING_DIRECTORY/.circleci/ansible/configure-server.yml")
-      - destroy_environment:
-          stack_name: udapeople-frontend-$CUR_SHORT_HASH
-          bucket_name: udapeople-frontend-$CUR_SHORT_HASH
-      - destroy_environment:
-          stack_name: udapeople-backend-$CUR_SHORT_HASH
-
 workflows:
   default:
     jobs:
