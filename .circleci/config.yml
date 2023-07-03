@@ -81,7 +81,7 @@ jobs:
           command: |
             cd frontend
             npm install
-            npm audit fix --audit-level=critical
+            npm audit fix
             npm audit --audit-level=critical
   scan-backend:
     docker:
@@ -95,10 +95,29 @@ jobs:
           command: |
             cd frontend
             npm install
-            npm audit fix --audit-level=critical
+            npm audit fix
             npm audit --audit-level=critical
-  
-
+  deploy-infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Create the Infrastructure backend
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/backend.yml \\
+              --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+              --tags project=udapeople
+      - run: 
+          name: Create the Infrastructure frontend
+          command: |
+            aws cloudformation deploy \
+              --template-file .circleci/files/frontend.yml \\
+              --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
+              --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
+              --tags project=udapeople             
 workflows:
   default:
     jobs:
