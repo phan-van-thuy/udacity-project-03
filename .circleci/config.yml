@@ -159,5 +159,8 @@ workflows:
           requires: [build-backend]
       - deploy-infrastructure:
           requires: [build-frontend]
+      - destroy_environment:
+          requires: [deploy-infrastructure]
+
 
       
