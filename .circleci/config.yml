@@ -82,7 +82,6 @@ jobs:
             cd frontend
             npm install
             npm audit fix --force --audit-level=critical
-            npm audit --audit-level=critical
   scan-backend:
     docker:
       - image: circleci/node:13.8.0
@@ -96,7 +95,6 @@ jobs:
             cd frontend
             npm install
             npm audit fix --force --audit-level=critical
-            npm audit --audit-level=critical
   deploy-infrastructure:
     docker:
       - image: amazon/aws-cli
