@@ -113,11 +113,9 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople
       - run: 
-          command: |
-            aws ec2 describe-instances \
-            --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:Project,Values=udacity" \
-            --output text >> .circleci/ansible/inventory
+          name: Distroy stack backend
+          command:  aws cloudformation delete  --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+          when: on_fail
       - run: 
           name: Create the Infrastructure frontend
           command: |
@@ -126,6 +124,10 @@ jobs:
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople         
+      - run: 
+          name: Distroy stack frontend
+          command:  aws cloudformation delete  --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
+          when: on_fail
 
   destroy_environment:
     docker:
@@ -141,26 +143,47 @@ jobs:
           command: |
             aws delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
           when: on_fail
-
+  
+  configure-infrastructure:
+    docker:
+      - image: python/default
+    steps:
+      - checkout
+      - exports
+      - add_ssh_keys:
+          fingerprints: ["98:35:50:49:89:69:28:31:b7:46:9a:09:c0:8a:a3:47:eb:8e:b4:2f"]
+      - python/install-packages:
+          args: ansible
+      - attach_workspace:
+          at: /home/circleci/workspace
+      - run: 
+          name: Run Playbook and Configure server
+          command: |
+            ansible-playbook -i $WORKSPACE_DIR/inventory.txt $(eval echo "$CIRCLE_WORKING_DIRECTORY/.circleci/ansible/configure-server.yml")
+      - destroy_environment:
+          stack_name: udapeople-frontend-$CUR_SHORT_HASH
+          bucket_name: udapeople-frontend-$CUR_SHORT_HASH
+      - destroy_environment:
+          stack_name: udapeople-backend-$CUR_SHORT_HASH
 workflows:
   default:
     jobs:
       - build-frontend:
           context: slack-secrets
-      - build-backend:
-          context: slack-secrets
       - test-frontend:
           requires: [build-frontend]
-      - test-backend:
-          requires: [build-backend]
       - scan-frontend:
           requires: [build-frontend]
+
+      - build-backend:
+          context: slack-secrets
+      - test-backend:
+          requires: [build-backend]
       - scan-backend:
           requires: [build-backend]
+
       - deploy-infrastructure:
           requires: [build-frontend]
-      - destroy_environment:
-          requires: [deploy-infrastructure]
 
 
       
