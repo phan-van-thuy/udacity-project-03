@@ -128,6 +128,8 @@ jobs:
               --tags project=udapeople         
 
     destroy_environment:
+      docker:
+        - image: amazon/aws-cli
       steps:
         - run:
             name: Destroy Environments backend
