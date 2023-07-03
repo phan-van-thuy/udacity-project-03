@@ -113,8 +113,25 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople
       - run: 
+          name:  Destroy Environments backend
+          commands:
+            destroy_environment:
+              parameters:
+                when_to_run:
+                  type: string
+                  default: "on_fail"
+              steps:
+                - run:
+                    name: Destroy Environments
+                    command: |
+                      aws delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+                    when: << parameters.when_to_run >>
+      - run: 
           command: |
-            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Project,Values=udacity" --output text >> .circleci/ansible/inventory
+            aws ec2 describe-instances \
+            --query 'Reservations[*].Instances[*].PublicIpAddress' \
+            --filters "Name=tag:Project,Values=udacity" \
+            --output text >> .circleci/ansible/inventory
       - run: 
           name: Create the Infrastructure frontend
           command: |
@@ -122,7 +139,21 @@ jobs:
               --template-file .circleci/files/frontend.yml \
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
-              --tags project=udapeople             
+              --tags project=udapeople      
+      - run: 
+          name:  Destroy Environments frontend
+          commands:
+            destroy_environment:
+              parameters:
+                when_to_run:
+                  type: string
+                  default: "on_fail"
+              steps:
+                - run:
+                    name: Destroy Environments
+                    command: |
+                      aws delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
+                    when: << parameters.when_to_run >>       
 workflows:
   default:
     jobs:
