@@ -165,6 +165,7 @@ jobs:
           bucket_name: udapeople-frontend-$CUR_SHORT_HASH
       - destroy_environment:
           stack_name: udapeople-backend-$CUR_SHORT_HASH
+
 workflows:
   default:
     jobs:
@@ -184,6 +185,7 @@ workflows:
 
       - deploy-infrastructure:
           requires: [build-frontend]
+      - configure-infrastructure
 
 
       
