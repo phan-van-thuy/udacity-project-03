@@ -127,20 +127,20 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople         
 
-    destroy_environment:
-      docker:
+  destroy_environment:
+    docker:
         - image: amazon/aws-cli
-      steps:
-        - run:
-            name: Destroy Environments backend
-            command: |
-              aws delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
-            when: on_fail
-        - run:
-            name: Destroy Environments frontend
-            command: |
-              aws delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
-            when: on_fail
+    steps:
+      - run:
+          name: Destroy Environments backend
+          command: |
+            aws delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
+          when: on_fail
+      - run:
+          name: Destroy Environments frontend
+          command: |
+            aws delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
+          when: on_fail
 
 workflows:
   default:
