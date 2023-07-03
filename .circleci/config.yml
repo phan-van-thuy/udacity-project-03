@@ -150,7 +150,6 @@ jobs:
       tag: "3.11.2"
     steps:
       - checkout
-      - exports
       - add_ssh_keys:
           fingerprints: ["98:35:50:49:89:69:28:31:b7:46:9a:09:c0:8a:a3:47:eb:8e:b4:2f"]
       - python/install-packages:
