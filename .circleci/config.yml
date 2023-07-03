@@ -169,23 +169,22 @@ jobs:
 workflows:
   default:
     jobs:
-      - build-frontend:
-          context: slack-secrets
+      - build-frontend
+      - build-backend
       - test-frontend:
           requires: [build-frontend]
-      - scan-frontend:
-          requires: [build-frontend]
-
-      - build-backend:
-          context: slack-secrets
       - test-backend:
           requires: [build-backend]
       - scan-backend:
           requires: [build-backend]
-
-      - deploy-infrastructure:
+      - scan-frontend:
           requires: [build-frontend]
-      - configure-infrastructure
-
+      - deploy-infrastructure:
+          requires: [test-frontend, test-backend, scan-frontend, scan-backend]
+          filters:
+            branches:
+              only: [test-feature-branch]
+      - configure-infrastructure:
+          requires: [deploy-infrastructure]
 
       
