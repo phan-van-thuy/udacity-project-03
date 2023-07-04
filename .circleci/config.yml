@@ -4,8 +4,6 @@ orbs:
 
 commands:
   destroy_environment:
-    docker:
-      - image: amazon/aws-cli
     steps:
       - run: 
           name: Destroy enviroment 
