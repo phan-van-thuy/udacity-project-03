@@ -125,6 +125,14 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople
       - run: 
+          name: Get ip EC2 to inventory
+          command: |
+            cd .circleci/ansible
+            aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Project,Values=udacity" \
+              --output text >> inventory.txt
+      - run: 
           name: Distroy stack backend
           command:  aws cloudformation delete  --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
           when: on_fail
@@ -144,8 +152,6 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["98:35:50:49:89:69:28:31:b7:46:9a:09:c0:8a:a3:47:eb:8e:b4:2f"]
-      - attach_workspace:
-          at: /home
       - run:
           name: Install dependencies - Install Ansible 
           command: |
@@ -153,10 +159,11 @@ jobs:
       - run: 
           name: Run Playbook and Configure server
           command: |
-            ansible-playbook -i $WORKSPACE_DIR/inventory.txt $(eval echo "$CIRCLE_WORKING_DIRECTORY/.circleci/ansible/configure-server.yml")
+            cd .circleci/ansible
+            ansible-playbook -i inventory.txt configure-server.yml
+
       ### DISTROY WHEN FAIL
       - destroy_environment
-
 
 
 workflows:
