@@ -162,7 +162,6 @@ jobs:
           command: |
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
-
       ### DISTROY WHEN FAIL
       - destroy_environment
 
