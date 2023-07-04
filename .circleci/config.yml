@@ -4,6 +4,8 @@ orbs:
 
 commands:
   destroy_environment:
+    docker:
+      - image: amazon/aws-cli
     steps:
       - run: 
           name: Destroy enviroment 
@@ -124,6 +126,10 @@ jobs:
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople
+            aws ec2 describe-instances \
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Project,Values=udacity" \
+              --output text >> inventory.txt
       - run: 
           name: Distroy stack backend
           command:  aws cloudformation delete  --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
@@ -152,10 +158,6 @@ jobs:
           name: Run Playbook and Configure server
           command: |
             cd .circleci/ansible
-            aws ec2 describe-instances \
-              --query 'Reservations[*].Instances[*].PublicIpAddress' \
-              --filters "Name=tag:Project,Values=udacity" \
-              --output text >> inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
       ### DISTROY WHEN FAIL
       - destroy_environment
