@@ -132,6 +132,7 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:Project,Values=udacity" \
               --output text >> inventory.txt
+            cat inventory.txt
       - run: 
           name: Distroy stack backend
           command:  aws cloudformation delete  --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
