@@ -1,6 +1,18 @@
 version: '2.1'
 orbs:
   slack: circleci/slack@4.1
+
+commands:
+  destroy_environment:
+    steps:
+      - run: 
+          name: Destroy enviroment 
+          when: on_fail
+          command: |
+            echo "Distroy environment: ${CIRCLE_WORKFLOW_ID:0:7}"
+            aws s3 rm s3://udapeople--${CIRCLE_WORKFLOW_ID:0:7} --recursive
+            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
+            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
 jobs:
   build-frontend:
     docker:
@@ -124,26 +136,7 @@ jobs:
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople         
-      - run: 
-          name: Distroy stack frontend
-          command:  aws cloudformation delete  --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
-          when: on_fail
-
-  destroy_environment:
-    docker:
-        - image: amazon/aws-cli
-    steps:
-      - run:
-          name: Destroy Environments backend
-          command: |
-            aws delete-stack --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
-          when: on_fail
-      - run:
-          name: Destroy Environments frontend
-          command: |
-            aws delete-stack --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}"
-          when: on_fail
-  
+      - destroy_environment
   configure-infrastructure:
     docker:
         - image: python:3.7-alpine3.11
@@ -162,14 +155,9 @@ jobs:
           command: |
             ansible-playbook -i $WORKSPACE_DIR/inventory.txt $(eval echo "$CIRCLE_WORKING_DIRECTORY/.circleci/ansible/configure-server.yml")
       ### DISTROY WHEN FAIL
-      - run: 
-          name: distroy when failed
-          command: |
-            echo "Distroy environment: ${CIRCLE_WORKFLOW_ID:0:7}"
-            aws s3 rm s3://udapeople--${CIRCLE_WORKFLOW_ID:0:7} --recursive
-            aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
-            aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-          when: on_fail
+      - destroy_environment
+
+
 
 workflows:
   default:
@@ -186,9 +174,6 @@ workflows:
           requires: [build-frontend]
       - deploy-infrastructure:
           requires: [test-frontend, test-backend, scan-frontend, scan-backend]
-          filters:
-            branches:
-              only: [test-feature-branch]
       - configure-infrastructure:
           requires: [deploy-infrastructure]
 
