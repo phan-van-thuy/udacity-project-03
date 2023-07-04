@@ -128,10 +128,6 @@ jobs:
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:Project,Values=udacity" \
               --output text >> inventory.txt
-      - persist_to_workspace:
-          root: ~/
-          paths:
-            - inventory.txt
       - run: 
           name: Create the Infrastructure frontend
           command: |
@@ -148,12 +144,6 @@ jobs:
       - checkout
       - add_ssh_keys:
           fingerprints: ["d9:1b:af:ea:76:e7:53:1a:e6:9f:34:13:ff:c3:a6:cf:76:6f:c0:ce	"]
-      - attach_workspace:
-          at: ~/
-      - run: 
-          name: Echo inventory
-          command: |
-            echo inventory.txt >> .circleci/ansible/inventory.txt
       - run:
           name: Install dependencies - Install Ansible 
           command: |
