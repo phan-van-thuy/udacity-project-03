@@ -118,6 +118,7 @@ jobs:
       - run:
           name: Create the Infrastructure backend
           command: |
+            yum install -y tar gzip
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
@@ -131,10 +132,6 @@ jobs:
           root: ~/
           paths:
             - inventory.txt
-      - run: 
-          name: Distroy stack backend
-          command:  aws cloudformation delete  --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}"
-          when: on_fail
       - run: 
           name: Create the Infrastructure frontend
           command: |
