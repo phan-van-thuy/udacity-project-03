@@ -166,13 +166,13 @@ jobs:
             aws ec2 describe-instances \
               --query 'Reservations[*].Instances[*].PublicIpAddress' \
               --filters "Name=tag:project,Values=udapeople" \
-              --output text >> inventory
-            cat inventory
+              --output text >> inventory.txt
+            cat inventory.txt
 
       - persist_to_workspace:
           root: .circleci/ansible
           paths: 
-            - inventory
+            - inventory.txt
       - run: 
           name: Create the Infrastructure frontend
           command: |
@@ -200,6 +200,7 @@ jobs:
           name: Run Playbook and Configure server
           command: |
             cd .circleci/ansible
+            cat .circleci/ansible/inventory.txt >> inventory.txt
             ansible-playbook -i inventory configure-server.yml
       ### DISTROY WHEN FAIL
       - destroy_environment
