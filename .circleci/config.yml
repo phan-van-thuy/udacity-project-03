@@ -116,9 +116,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Create the Infrastructure backend
+          name: Install tar gzip
           command: |
             yum install -y tar gzip
+      - run:
+          name: Create the Infrastructure backend
+          command: |
             aws cloudformation deploy \
               --template-file .circleci/files/backend.yml \
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
@@ -141,12 +144,18 @@ jobs:
               --filters "Name=tag:Project,Values=udacity" \
               --output text >> inventory.txt
             cat inventory.txt    
+      - persist_to_workspace:
+          root: /home
+          paths: 
+            - inventory.txt  
       - destroy_environment
   configure-infrastructure:
     docker:
         - image: python:3.7-alpine3.11
     steps:
       - checkout
+      - attach_workspace:
+          at: /home/
       - add_ssh_keys:
           fingerprints: ["21:b1:57:6a:8c:41:3f:f8:cc:c7:d8:48:0c:3a:d6:2e"]
       - run:
@@ -157,7 +166,7 @@ jobs:
           name: Run Playbook and Configure server
           command: |
             cd .circleci/ansible
-            ansible-playbook -i inventory.txt configure-server.yml
+            ansible-playbook -i $WORKSPACE_DIR/inventory.txt configure-server.yml
       ### DISTROY WHEN FAIL
       - destroy_environment
 
