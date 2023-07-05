@@ -131,14 +131,18 @@ jobs:
           name: Echo IPEC 
           command: |
             cd .circleci/ansible
-            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' \
-            --filters "Name=tag:Project,Values=udacity" \
-            --output text >> inventory
-            cat inventory.txt
+            touch inventory
+            echo [all] > inventory
+            aws ec2 describe-instances \
+            \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                  --filters "Name=tag:Project,Values=udacity" \
+                  --output text >> inventory
+            cat inventory
       - persist_to_workspace:
           root: .circleci/ansible
           paths: 
-            - inventory.txt  
+            - inventory
       - run: 
           name: Create the Infrastructure frontend
           command: |
@@ -165,9 +169,9 @@ jobs:
       - run: 
           name: Run Playbook and Configure server
           command: |
-            cat .circleci/ansible/inventory.txt
+            cat .circleci/ansible/inventory
             cd .circleci/ansible
-            ansible-playbook -i inventory.txt configure-server.yml
+            ansible-playbook -i inventory configure-server.yml
       ### DISTROY WHEN FAIL
       - destroy_environment
 
