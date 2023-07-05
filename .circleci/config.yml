@@ -165,7 +165,7 @@ jobs:
             cd .circleci/ansible
             aws ec2 describe-instances \
                 --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                --filters "Name=tag:Project,Values=udacity" \
+                --filters "Name=tag:project,Values=udacity" \
                 --output text >> inventory.txt
             cat inventory.txt
 
