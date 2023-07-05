@@ -14,18 +14,18 @@
 
 - name: "Copy compressed backend folder"
   copy:
-    src: "artifact-backend.tar.gz"
-    dest: "~/udacity/artifact-backend.tar.gz"
+    src: "artifact.tar.gz"
+    dest: "~/udacity/artifact.tar.gz"
 
 - name: "Extract backend"
   unarchive:
     remote_src: yes
-    src: "~/server/artifact-backend.tar.gz"
-    dest: "~/server"
+    src: "~/udacity/artifact.tar.gz"
+    dest: "~/udacity"
 
 - name: "Run the web server"
   shell:
     cmd: |
-      cd ~/server
+      cd ~/udacity
       pm2 stop default
       pm2 start npm -- start --wait-ready
