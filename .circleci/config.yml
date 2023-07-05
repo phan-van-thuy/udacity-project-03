@@ -14,7 +14,7 @@ commands:
           echo "Distroy environment: ${CIRCLE_WORKFLOW_ID:0:7}"
 
   # Exercise - Rollback
-  destroy_environment:
+  destroy-environment:
     description: Destroy backend and frontend cloudformation stacks given a workflow ID.
     steps:
       - run:
@@ -24,7 +24,7 @@ commands:
             echo "Distroy environment: ${CIRCLE_WORKFLOW_ID:0:7}"
             aws cloudformation delete-stack --stack-name udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}
             aws cloudformation delete-stack --stack-name udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}
-  revert_migrations:
+  revert-migrations:
     description: Revert the last migration if successfully run in the current workflow. 
     steps:
       - run:
@@ -178,7 +178,7 @@ jobs:
               --stack-name "udapeople-frontend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople     
-      - destroy_environment
+      - destroy-environment
   configure-infrastructure:
     docker:
         - image: python:3.7-alpine3.11
@@ -199,7 +199,7 @@ jobs:
             cat ipec2.txt >> inventory.txt
             ansible-playbook -i inventory.txt configure-server.yml
       ### DISTROY WHEN FAIL
-      - destroy_environment
+      - destroy-environment
 
   run-migrations:
     docker:
@@ -259,7 +259,7 @@ jobs:
 
       # Rollback if fail
       - revert-migrations
-      - destroy_environment
+      - destroy-environment
   deploy-backend:
     docker: 
       - image: python:3.7-alpine3.11
@@ -294,7 +294,7 @@ jobs:
             ansible-playbook -i inventory.txt deploy-backend.yml
       # Rollback if fail
       - revert-migrations
-      - destroy_environment
+      - destroy-environment
 
   smoke-test:
     docker:
@@ -332,7 +332,7 @@ jobs:
             fi
       # Rollback if fail
       - revert-migrations
-      - destroy_environment
+      - destroy-environment
 workflows:
   default:
     jobs:
