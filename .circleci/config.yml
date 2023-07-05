@@ -276,7 +276,7 @@ jobs:
           name: Install dependencies - Install Ansible 
           command: |
             apk add --update ansible
-            yum install -y tar gzip npm
+            yum install tar gzip npm -y 
       - attach_workspace:
           at: .circleci/ansible
       - run:
