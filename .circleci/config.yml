@@ -10,7 +10,8 @@ commands:
       id: 
         type: string
     steps:
-      - run: echo "Distroy environment: ${CIRCLE_WORKFLOW_ID:0:7}"
+      - run: |
+          echo "Distroy environment: ${CIRCLE_WORKFLOW_ID:0:7}"
 
   # Exercise - Rollback
   destroy_environment:
