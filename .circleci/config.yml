@@ -127,9 +127,6 @@ jobs:
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople
-      - run: 
-          name: Echo IPEC 
-          command: |
             cd .circleci/ansible
             touch inventory
             echo [all] > inventory
@@ -138,6 +135,7 @@ jobs:
                   --filters "Name=tag:Project,Values=udacity" \
                   --output text >> inventory
             cat inventory
+
       - persist_to_workspace:
           root: .circleci/ansible
           paths: 
