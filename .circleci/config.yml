@@ -164,13 +164,13 @@ jobs:
           command: |
             cd .circleci/ansible
             aws ec2 describe-instances \
-                --query 'Reservations[*].Instances[*].PublicIpAddress' \
-                --filters "Name=tag:project,Values=udacity" \
-                --output text >> inventory.txt
+              --query 'Reservations[*].Instances[*].PublicIpAddress' \
+              --filters "Name=tag:Project,Values=udacity" \
+              --output text >> inventory.txt
             cat inventory.txt
 
       - persist_to_workspace:
-          root: .circleci/ansible
+          root: /home/circleci
           paths: 
             - inventory
       - run: 
@@ -189,7 +189,7 @@ jobs:
     steps:
       - checkout
       - attach_workspace:
-          at: .circleci/ansible
+          at: /home/circleci
       - add_ssh_keys:
           fingerprints: ["21:b1:57:6a:8c:41:3f:f8:cc:c7:d8:48:0c:3a:d6:2e"]
       - run:
@@ -199,7 +199,7 @@ jobs:
       - run: 
           name: Run Playbook and Configure server
           command: |
-            cat .circleci/ansible/inventory.txt
+            cat /home/circleci/inventory.txt >> .circleci/ansible/inventory.txt
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       ### DISTROY WHEN FAIL
