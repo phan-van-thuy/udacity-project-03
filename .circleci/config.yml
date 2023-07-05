@@ -262,16 +262,19 @@ jobs:
       - destroy-environment
   deploy-backend:
     docker: 
-      - image: python:3.7-alpine3.11
+      - image: circleci/node:13.8.0
     steps:
       - checkout
-
+      - restore_cache:
+          keys: [backend-build]
       - add_ssh_keys:
           fingerprints: ["5a:71:5b:3e:79:bb:94:65:69:ac:e4:6f:1b:c8:f0:e1"]
       - run:
-          name: Install dependencies - Install Ansible 
+          name: "Install AWS CLI"
           command: |
-            apk add --update ansible curl tar gzip npm awscli
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - attach_workspace:
           at: .circleci/ansible
       - run:
