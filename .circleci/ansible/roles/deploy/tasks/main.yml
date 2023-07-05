@@ -6,12 +6,26 @@
     state: latest
     update_cache: yes
 
-- name: Stop PM2 default process
-  shell: pm2 stop default
-  args:
-    executable: /bin/bash
+- name: "Creates directory"
+  file:
+    path: "~/udacity"
+    state: "directory"
+    mode: 0755
 
-- name: Start PM2 npm process
-  shell: pm2 start npm -- start
-  args:
-    executable: /bin/bash
+- name: "Copy compressed backend folder"
+  copy:
+    src: "artifact-backend.tar.gz"
+    dest: "~/udacity/artifact-backend.tar.gz"
+
+- name: "Extract backend"
+  unarchive:
+    remote_src: yes
+    src: "~/server/artifact-backend.tar.gz"
+    dest: "~/server"
+
+- name: "Run the web server"
+  shell:
+    cmd: |
+      cd ~/server
+      pm2 stop default
+      pm2 start npm -- start --wait-ready
