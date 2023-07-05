@@ -163,8 +163,11 @@ jobs:
           name: echo IPEC 
           command: |
             cd .circleci/ansible
-            aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Project,Values=udacity" --output text >> inventory
-            cat inventory
+            aws ec2 describe-instances \
+                --query 'Reservations[*].Instances[*].PublicIpAddress' \
+                --filters "Name=tag:Project,Values=udacity" \
+                --output text >> inventory.txt
+            cat inventory.txt
 
       - persist_to_workspace:
           root: .circleci/ansible
@@ -196,9 +199,9 @@ jobs:
       - run: 
           name: Run Playbook and Configure server
           command: |
-            cat .circleci/ansible/inventory
+            cat .circleci/ansible/inventory.txt
             cd .circleci/ansible
-            ansible-playbook -i inventory configure-server.yml
+            ansible-playbook -i inventory.txt configure-server.yml
       ### DISTROY WHEN FAIL
       - destroy_environment
 
