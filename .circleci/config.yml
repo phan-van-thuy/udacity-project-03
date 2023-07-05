@@ -166,7 +166,7 @@ jobs:
       - run: 
           name: Run Playbook and Configure server
           command: |
-            cat /.circleci/ansible/inventory.txt
+            cat .circleci/ansible/inventory.txt
             cd .circleci/ansible
             ansible-playbook -i inventory.txt configure-server.yml
       ### DISTROY WHEN FAIL
