@@ -290,11 +290,6 @@ jobs:
             echo "Contents  of the inventory.txt file is -------"
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
-      - run:
-          name: "Ansible play book for deploy backend"
-          command: |
-            cd .circleci/ansible
-            ansible-playbook -i inventory.txt deploy-backend.yml
       # Rollback if fail
       - revert-migrations
       - destroy-environment
