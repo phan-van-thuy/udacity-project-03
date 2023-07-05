@@ -234,15 +234,15 @@ jobs:
       - image: amazon/aws-cli
     steps:
       - checkout
-      - attach_workspace:
-          at: .circleci/ansible
       - restore_cache:
           keys: [frontend-build]
       - run:
           name: Install dependencies
           command: |
-            yum install -y tar gzip
             npm install 
+            yum install -y tar gzip
+      - attach_workspace:
+          at: .circleci/ansible
       - run:
           name: Get backend url
           command: |
@@ -284,4 +284,4 @@ workflows:
       - run-migrations:
           requires: [configure-infrastructure]
       - deploy-frontend:
-          requires: [configure-infrastructure, deploy-infrastructure]
+          requires: [configure-infrastructure]
