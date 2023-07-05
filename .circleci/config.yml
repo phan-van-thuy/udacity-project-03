@@ -159,7 +159,10 @@ jobs:
               --stack-name "udapeople-backend-${CIRCLE_WORKFLOW_ID:0:7}" \
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople
-            cd .circleci/ansible
+      - run:
+          name: echo IPEC 
+          command: |
+            cd ansible
             aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:Project,Values=udacity" --output text >> inventory
             cat inventory
 
@@ -207,7 +210,7 @@ jobs:
       - run:
           name: Run migrations
           command: |
-            cd ~/project3/backend
+            cd backend
             npm install
             npm run migrations > migrations_dump.txt
             cat migrations_dump.txt
@@ -215,7 +218,7 @@ jobs:
           name: Send migration status to kvdb.io 
           command: |
             echo  https://kvdb.io/9GE4jRtKznmVKRfvdBABBe/migration_${CIRCLE_WORKFLOW_ID:0:7}
-            cd ~/project3/backend
+            cd backend
             if grep -q "has been executed successfully." ~/project/backend/migrations_dump.txt
             then
               curl --insecure https://kvdb.io/9GE4jRtKznmVKRfvdBABBe/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
