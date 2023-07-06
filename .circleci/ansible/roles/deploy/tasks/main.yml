@@ -1,21 +1,21 @@
 ---
 - name: Creates director
   file:
-    path: "~/udacity"
-    state: "directory"
+    path: ~/udacity
+    state: directory
     mode: 0755
   
 
 - name: Copy compressed backend folder
   copy:
-    src: "/ansible/artifact.tar.gz"
-    dest: "~/udacity/artifact.tar.gz"
+    src: artifact.tar.gz
+    dest: ~/udacity/artifact.tar.gz
 
 - name: Extract backend
   unarchive:
     remote_src: yes
-    src: "~/udacity/artifact.tar.gz"
-    dest: "~/udacity"
+    src: ~/udacity/artifact.tar.gz
+    dest: ~/udacity
 
 - name: Run the web server
   shell:
