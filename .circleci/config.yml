@@ -339,8 +339,8 @@ jobs:
               return 1
             fi
       # Rollback if fail
-      - revert-migrations
-      - destroy-environment
+#      - revert-migrations
+#      - destroy-environment
 
 
   cloudfront-update:
