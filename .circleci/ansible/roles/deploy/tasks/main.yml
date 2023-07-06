@@ -21,6 +21,6 @@
   shell:
     cmd: |
       cd ~/udacity
-      npm i --force
+      npm i
       pm2 stop default
       pm2 start npm -- start --wait-ready
