@@ -273,7 +273,8 @@ jobs:
               apk add --update ansible
               apk add --no-cache tar
               pip install --upgrade awscli
-
+              apk add --no-cache npm
+              apk add --no-cache curl
       - attach_workspace:
           at: .circleci/ansible
       - run:
