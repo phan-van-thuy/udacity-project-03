@@ -308,7 +308,7 @@ jobs:
       - run:
           name: Install dependencies - Install Ansible 
           command: |
-            yum install -y curl 
+            yum install -y curl tar 
       - attach_workspace:
           at: .circleci/ansible
       - run:
