@@ -4,10 +4,11 @@
     path: "~/udacity"
     state: "directory"
     mode: 0755
+  
 
 - name: Copy compressed backend folder
   copy:
-    src: "/backend/artifact.tar.gz"
+    src: "artifact.tar.gz"
     dest: "~/udacity/artifact.tar.gz"
 
 - name: Extract backend
