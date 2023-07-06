@@ -1,29 +1,29 @@
 ---
-- name: "install npm."
+- name: install npm
   become: true
   apt:
     name: ["npm"]
     state: latest
     update_cache: yes
 
-- name: "Creates directory"
+- name: Creates director
   file:
     path: "~/udacity"
     state: "directory"
     mode: 0755
 
-- name: "Copy compressed backend folder"
+- name: Copy compressed backend folder
   copy:
     src: "/backend/artifact.tar.gz"
     dest: "~/udacity/artifact.tar.gz"
 
-- name: "Extract backend"
+- name: Extract backend
   unarchive:
     remote_src: yes
     src: "~/udacity/artifact.tar.gz"
     dest: "~/udacity"
 
-- name: "Run the web server"
+- name: Run the web server
   shell:
     cmd: |
       cd ~/udacity
