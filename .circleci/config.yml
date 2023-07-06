@@ -248,9 +248,7 @@ jobs:
           name: Get backend url
           command: |
             export BACKEND_IP=$(cat .circleci/ansible/ipec2.txt)
-            echo "${BACKEND_IP}"
             export API_URL="http://${BACKEND_IP}:3030"
-            echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
       - run: 
