@@ -247,8 +247,9 @@ jobs:
       - run:
           name: Get backend url
           command: |
-            export BACKEND_IP=$(cat .circleci/ansible/ipec2.txt)
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
+            echo "API_URL = ${API_URL}"
             echo API_URL="http://${BACKEND_IP}:3030" >> frontend/.env
             cat frontend/.env
       - run: 
@@ -263,6 +264,7 @@ jobs:
       # Rollback if fail
       - revert-migrations
       - destroy-environment
+
   deploy-backend:
     docker: 
       - image: python:3.7-alpine3.11
@@ -289,7 +291,6 @@ jobs:
             npm run build
             cd ..
             tar -C backend -czvf artifact.tar.gz .
-            ls -ll
             cp artifact.tar.gz .circleci/ansible/
             cd .circleci/ansible
             echo "Contents  of the inventory.txt file is -------"
@@ -313,8 +314,7 @@ jobs:
       - run:
           name: Frontend smoke test.
           command: |
-            export BACKEND_IP=$(cat .circleci/ansible/ipec2.txt)
-            echo "${BACKEND_IP}"
+            export BACKEND_IP=$(aws ec2 describe-instances --query 'Reservations[*].Instances[*].PublicIpAddress' --filters "Name=tag:project,Values=udapeople" --output text)
             export API_URL="http://${BACKEND_IP}:3030"
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
