@@ -1,24 +1,26 @@
-- name: "Creates directory"
+---
+- name: Creates director
   file:
-    path: ~/server
+    path: ~/udacity
     state: directory
-    mode: 0755
+    mode: 0777
+  
 
-- name: "Copy compressed backend folder"
+- name: Copy compressed backend folder
   copy:
     src: artifact.tar.gz
-    dest: ~/server/artifact-backend.tar.gz
+    dest: ~/udacity/artifact.tar.gz
 
-- name: "Extract backend"
+- name: Extract backend
   unarchive:
     remote_src: yes
-    src: ~/server/artifact.tar.gz
-    dest: "~/server"
+    src: ~/udacity/artifact.tar.gz
+    dest: ~/udacity
 
-- name: "Run the web server"
+- name: Run the web server
   shell:
     cmd: |
-      cd ~/server
-      npm install
-      pm2 stop default
-      pm2 start npm -- start --wait-ready
+    cd ~/udacity
+    npm install
+    pm2 stop default
+    pm2 start npm -- start
