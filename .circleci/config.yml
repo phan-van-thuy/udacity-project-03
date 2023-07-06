@@ -192,6 +192,10 @@ jobs:
           name: Install dependencies - Install Ansible 
           command: |
               apk add --update ansible
+              apk add --no-cache tar
+              pip install --upgrade awscli
+              apk add --no-cache npm
+              apk add --no-cache curl
       - run: 
           name: Run Playbook and Configure server
           command: |
@@ -302,7 +306,7 @@ jobs:
       - run:
           name: Install dependencies - Install Ansible 
           command: |
-            yum install -y curl  
+            yum install -y curl 
       - attach_workspace:
           at: .circleci/ansible
       - run:
