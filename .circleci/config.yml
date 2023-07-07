@@ -341,13 +341,13 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
-              return 1
+              return 0
             else
               return 1
             fi
       # Rollback if fail
-#      - revert-migrations
-#      - destroy-environment
+      - revert-migrations
+      - destroy-environment
 
 
   cloudfront-update:
