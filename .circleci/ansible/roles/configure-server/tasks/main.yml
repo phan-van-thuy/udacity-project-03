@@ -1,4 +1,9 @@
 ---
+- name: "Import env"
+  become: true
+  shell:  |
+    echo TYPEORM_CONNECTION >> .env
+    
 - name: upgrade packages
   become: true
   apt:
@@ -23,3 +28,4 @@
     global: yes
     production: yes
     state: "present"
+
