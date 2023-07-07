@@ -397,8 +397,6 @@ jobs:
                 echo "----------not found stack delete-----------"
               fi
                      
-
-
 workflows:
   default:
     jobs:
