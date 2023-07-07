@@ -351,7 +351,6 @@ jobs:
       - destroy-environment
       - revert-migrations
 
-
   cloudfront-update:
     docker:
       - image: amazon/aws-cli
@@ -396,7 +395,7 @@ jobs:
             command: |
               if [[ "${STACKS[@]}" =~ "${OldWorkflowID}" ]]
               then
-                echo "----------delete-stack----------------"
+                echo "----------your stack to delete----------------"
                 aws s3 rm "s3://udapeople-${OldWorkflowID}" --recursive
                 aws cloudformation delete-stack --stack-name "udapeople-backend-${OldWorkflowID}"
                 aws cloudformation delete-stack --stack-name "udapeople-frontend-${OldWorkflowID}"
