@@ -15,7 +15,7 @@
   unarchive:
     remote_src: yes
     src: /home/ubuntu/udacity/artifact.tar.gz
-    dest: /home/ubuntu/udacity/udacity
+    dest: /home/ubuntu/udacity
 
 - name: Run the web server
   shell:
