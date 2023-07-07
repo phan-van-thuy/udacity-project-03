@@ -377,7 +377,6 @@ jobs:
             echo current Workflow Id: "${CIRCLE_WORKFLOW_ID:0:7}"
       - destroy-environment
       - revert-migrations
-
   cleanup:
       docker:
         - image: amazon/aws-cli
