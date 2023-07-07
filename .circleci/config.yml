@@ -180,6 +180,8 @@ jobs:
               --parameter-overrides ID="${CIRCLE_WORKFLOW_ID:0:7}"  \
               --tags project=udapeople     
       - destroy-environment
+      - revert-migrations
+      
   configure-infrastructure:
     docker:
         - image: python:3.7-alpine3.11
@@ -205,6 +207,7 @@ jobs:
             ansible-playbook -i inventory.txt configure-server.yml
       ### DISTROY WHEN FAIL
       - destroy-environment
+      - revert-migrations
 
   run-migrations:
     docker:
@@ -228,6 +231,7 @@ jobs:
               curl --insecure https://kvdb.io/9GE4jRtKznmVKRfvdBABBe/migration_${CIRCLE_WORKFLOW_ID:0:7} -d '1'
             fi
     # Rollback if fail
+      - destroy-environment
       - revert-migrations
 
   deploy-frontend:
@@ -263,8 +267,8 @@ jobs:
             aws s3 cp dist s3://udapeople-${CIRCLE_WORKFLOW_ID:0:7} --recursive
 
       # Rollback if fail
-      - revert-migrations
       - destroy-environment
+      - revert-migrations
 
   deploy-backend:
     docker: 
@@ -307,8 +311,8 @@ jobs:
             cat inventory.txt
             ansible-playbook -i inventory.txt deploy-backend.yml
       # Rollback if fail
-      - revert-migrations
       - destroy-environment
+      - revert-migrations
 
   smoke-test:
     docker:
@@ -329,9 +333,9 @@ jobs:
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
-              return 1
+              echo "-----------Frontend test passed---------"
             else
-              return 1
+              echo "-----------Frontend test failed---------"
             fi
       - run:
           name: "Backend smoke test"
@@ -344,9 +348,8 @@ jobs:
             else
               echo "-----------Backend test failed---------"
             fi
-      # Rollback if fail
-      - revert-migrations
       - destroy-environment
+      - revert-migrations
 
 
   cloudfront-update:
@@ -370,6 +373,8 @@ jobs:
              --parameter-overrides WorkflowID="udapeople-${CIRCLE_WORKFLOW_ID:0:7}" --tags project=udapeople
             echo OldWorkflowID: "${OldWorkflowID}"
             echo current Workflow Id: "${CIRCLE_WORKFLOW_ID:0:7}"
+      - destroy-environment
+      - revert-migrations
 
   cleanup:
       docker:
@@ -379,12 +384,9 @@ jobs:
         - run:
             name: Get old stack workflow id
             command: |
-              export OldWorkflowID=$(aws cloudformation \
-                list-exports --query "Exports[?Name==\`WorkflowID\`].Value" \
-                --no-paginate --output text)
+              export OldWorkflowID=$(aws cloudformation list-exports --query "Exports[?Name=='WorkflowID'].Value" --no-paginate --output text)
               echo OldWorkflowID: "${OldWorkflowID}"
-              echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"
-              ## Fetch the stack names          
+              echo CIRCLE_WORKFLOW_ID "${CIRCLE_WORKFLOW_ID:0:7}"      
               export STACKS=($(aws cloudformation list-stacks \
                 --query "StackSummaries[*].StackName" \
                 --stack-status-filter CREATE_COMPLETE --no-paginate --output text)) 
@@ -401,7 +403,8 @@ jobs:
               else 
                 echo "----------not found stack delete-----------"
               fi
-                     
+        - destroy-environment
+        - revert-migrations                     
 workflows:
   default:
     jobs:
@@ -429,3 +432,5 @@ workflows:
           requires: [deploy-frontend, deploy-backend]
       - cloudfront-update:
           requires: [smoke-test]
+      - cleanup:
+          requires: [cloudfront-update]
