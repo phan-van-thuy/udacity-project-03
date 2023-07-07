@@ -328,10 +328,10 @@ jobs:
             echo "${API_URL}"
             if curl "${API_URL}/api/status" | grep "ok"
             then
-              echo "-----------Backend test passed---------"
+              echo "-----------Frontend test passed---------"
               exit 0
             else
-              echo "-----------Backend test failed---------"
+              echo "-----------Frontend test failed---------"
               exit 1
             fi
       - run:
@@ -341,9 +341,9 @@ jobs:
             echo ${URL} 
             if curl -s ${URL} | grep "Welcome"
             then
-              return 0
+              echo "-----------Backend test passed---------"
             else
-              return 1
+              echo "-----------Backend test failed---------"
             fi
       # Rollback if fail
       - revert-migrations
