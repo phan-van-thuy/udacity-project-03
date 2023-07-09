@@ -14,7 +14,7 @@ Resources:
       GroupDescription: Allow port 22 and port 3030.
       SecurityGroupIngress:
         - IpProtocol: tcp
-          fsafasf
+          vzdgzdfg
           FromPort: 22
           ToPort: 22
           CidrIp: 0.0.0.0/0
